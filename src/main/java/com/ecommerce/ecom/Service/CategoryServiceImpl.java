@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService{
@@ -20,5 +21,19 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public void addCategory(Category category) {
         categories.add(category);
+    }
+
+    @Override
+    public String deleteCategory(Long categoryId){
+        Optional<Category> optionalCategory = categories.stream()
+                .filter(e -> e.getCategoryId().equals(categoryId))
+                .findFirst();
+
+        if (optionalCategory.isPresent()) {
+            categories.remove(optionalCategory.get());
+            return "Category deleted successfully";
+        } else {
+            throw new RuntimeException("Category not found");
+        }
     }
 }
