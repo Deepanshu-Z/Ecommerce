@@ -5,9 +5,7 @@ import com.ecommerce.ecom.Service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,8 +18,17 @@ public class CategoryController {
     public CategoryController(CategoryService categoryService){
         this.categoryService = categoryService;
     }
+    @PostMapping("/admin/category")
+    public ResponseEntity<String> addCategory(@RequestBody Category category){
+        try{
+            categoryService.addCategory(category);
+            return new ResponseEntity<>("Category created successfully", HttpStatus.CREATED);
+        }catch (Exception e){
+            return new ResponseEntity<>("Problem creating category: " + e, HttpStatus.BAD_REQUEST);
+        }
+    }
 
-    @GetMapping("/admin/category")
+    @GetMapping("/public/categories")
     public ResponseEntity<List<Category>> getAll(){
        List<Category> categories = categoryService.getAll();
 
@@ -32,4 +39,6 @@ public class CategoryController {
        }
 
     }
+
+
 }
