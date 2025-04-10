@@ -51,5 +51,14 @@ public class CategoryController {
 
     }
 
+    @PutMapping("/admin/categories/{categoryid}")
+    public ResponseEntity<String> updateCategory(@PathVariable Long categoryid){
+        try{
+            String message = categoryService.updateCategory(categoryid);
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Category not found please try again" + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }

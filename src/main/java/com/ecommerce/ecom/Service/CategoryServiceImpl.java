@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,20 @@ public class CategoryServiceImpl implements CategoryService{
             categories.remove(optionalCategory.get());
             return "Category deleted successfully";
         } else {
-            throw new RuntimeException("Category not found");
+            throw new RuntimeException("Category not found to be deleted");
         }
+    }
+
+    @Override
+    public String updateCategory(Long categoryid){
+        Optional<Category> foundCategory = categories.stream()
+                .filter(e -> e.getCategoryId().equals(categoryid))
+                .findFirst();
+        if(foundCategory.isPresent()){
+            Category updateCategory = foundCategory.get();
+            updateCategory.setCategoryName(updateCategory.getCategoryName() + "Updated");
+            return "Updated Successfully!";
+
+        }throw new RuntimeException("Category not found to be updated");
     }
 }
