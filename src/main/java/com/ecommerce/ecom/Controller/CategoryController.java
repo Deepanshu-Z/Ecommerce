@@ -21,24 +21,14 @@ public class CategoryController {
     }
     @PostMapping("/admin/category")
     public ResponseEntity<String> addCategory(@Valid @RequestBody Category category){
-        try{
-            categoryService.addCategory(category);
-            return new ResponseEntity<>("Category created successfully", HttpStatus.CREATED);
-        }catch (Exception e){
-            return new ResponseEntity<>("Problem creating category: " + e, HttpStatus.BAD_REQUEST);
-        }
+        categoryService.addCategory(category);
+        return new ResponseEntity<>("Category created successfully", HttpStatus.CREATED);
     }
 
     @GetMapping("/public/categories")
     public ResponseEntity<List<Category>> getAll(){
        List<Category> categories = categoryService.getAll();
-
-       if(categories.isEmpty()){
-           return ResponseEntity.noContent().build();
-       }else{
-           return new ResponseEntity<>(categories, HttpStatus.OK);
-       }
-
+       return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
     @DeleteMapping("/admin/categories/{categoryId}")
@@ -49,12 +39,8 @@ public class CategoryController {
 
     @PutMapping("/admin/categories/{categoryid}")
     public ResponseEntity<String> updateCategory(@PathVariable Long categoryid){
-        try{
             String message = categoryService.updateCategory(categoryid);
             return new ResponseEntity<>(message, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Category not found please try again" + e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
     }
 
 }

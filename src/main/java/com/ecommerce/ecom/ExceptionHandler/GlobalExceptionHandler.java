@@ -12,6 +12,11 @@ import java.util.Map;
 
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGenericException(Exception e) {
+        return new ResponseEntity<>("Something went wrong. Please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> myMethodArgumentNotValidException(MethodArgumentNotValidException e){
             Map<String, String> response = new HashMap<>();
@@ -27,6 +32,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<String> myResourceNotFoundException(ResourceNotFoundException e){
+        String response = e.getMessage();
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<String> myApiException(ApiException e){
         String response = e.getMessage();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
