@@ -1,4 +1,5 @@
 package com.ecommerce.ecom.Service;
+import com.ecommerce.ecom.ExceptionHandler.ResourceNotFoundException;
 import com.ecommerce.ecom.Model.Category;
 import com.ecommerce.ecom.Repository.CategoryRepository;
 import com.ecommerce.ecom.Service.CategoryService;
@@ -38,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService{
             categoryRepository.delete(optionalCategory.get());
             return "Category deleted successfully";
         } else {
-            throw new RuntimeException("Category not found to be deleted");
+            throw new ResourceNotFoundException("Category", categoryId);
         }
     }
 
@@ -52,6 +53,6 @@ public class CategoryServiceImpl implements CategoryService{
             categoryRepository.save(updateCategory);
             return "Updated Successfully!";
 
-        }throw new RuntimeException("Category not found to be updated");
+        }throw new ResourceNotFoundException("Category", categoryid);
     }
 }
