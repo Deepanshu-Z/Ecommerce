@@ -1,6 +1,8 @@
 package com.ecommerce.ecom.Service;
 import com.ecommerce.ecom.Model.Category;
+import com.ecommerce.ecom.Repository.CategoryRepository;
 import com.ecommerce.ecom.Service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,26 +14,28 @@ import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService{
-    List<Category> categories = new ArrayList<>();
 
+    CategoryRepository categoryRepository;
+    @Autowired
+    public CategoryServiceImpl(CategoryRepository categoryRepository){
+        this.categoryRepository = categoryRepository;
+    }
     @Override
     public List<Category> getAll() {
-        return categories;
+        return categoryRepository.findAll();
     }
 
     @Override
     public void addCategory(Category category) {
-        categories.add(category);
+        categoryRepository.save(category);
     }
 
     @Override
     public String deleteCategory(Long categoryId){
-        Optional<Category> optionalCategory = categories.stream()
-                .filter(e -> e.getCategoryId().equals(categoryId))
-                .findFirst();
+       Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
 
         if (optionalCategory.isPresent()) {
-            categories.remove(optionalCategory.get());
+            categoryRepository.delete(optionalCategory.get());
             return "Category deleted successfully";
         } else {
             throw new RuntimeException("Category not found to be deleted");
@@ -40,12 +44,12 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public String updateCategory(Long categoryid){
-        Optional<Category> foundCategory = categories.stream()
-                .filter(e -> e.getCategoryId().equals(categoryid))
-                .findFirst();
-        if(foundCategory.isPresent()){
-            Category updateCategory = foundCategory.get();
-            updateCategory.setCategoryName(updateCategory.getCategoryName() + "Updated");
+        Optional<Category> optionalCategory = categoryRepository.findById(categoryid);
+
+        if(optionalCategory.isPresent()){
+            Category updateCategory = optionalCategory.get();
+            updateCategory.setCategoryName(updateCategory.getCategoryName() + "updated");
+            categoryRepository.save(updateCategory);
             return "Updated Successfully!";
 
         }throw new RuntimeException("Category not found to be updated");
