@@ -30,7 +30,7 @@ public class CategoryController {
 
     @GetMapping("/public/categories")
     public ResponseEntity<CategoryResponse> getAll(
-            @RequestParam(defaultValue = "1") Integer pageNumber,
+            @RequestParam(defaultValue = "0") Integer pageNumber,
             @RequestParam(defaultValue = "10") Integer pageSize
     ){
        CategoryResponse categories = categoryService.getAll(pageNumber, pageSize);

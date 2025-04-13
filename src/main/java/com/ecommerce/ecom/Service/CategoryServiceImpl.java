@@ -34,6 +34,7 @@ public class CategoryServiceImpl implements CategoryService{
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Category> pageDetails = categoryRepository.findAll(pageable);
         List<Category> categories =  pageDetails.getContent();
+        System.out.println("Total categories fetched: " + categories.size());
         if(categories.isEmpty()){
             throw new ResourceNotFoundException("No categories present, please add some categories first!");
         }
@@ -43,6 +44,11 @@ public class CategoryServiceImpl implements CategoryService{
 
         CategoryResponse response = new CategoryResponse();
         response.setCategoryResponse(categoryDTOS);
+        response.setPageNumber(pageDetails.getNumber());
+        response.setPageSize(pageDetails.getSize());
+        response.setTotalElements(pageDetails.getTotalElements());
+        response.setTotalPages(pageDetails.getTotalPages());
+        response.setLastPage(pageDetails.isLast());
         return response;
     }
 

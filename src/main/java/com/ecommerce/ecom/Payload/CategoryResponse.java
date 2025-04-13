@@ -9,7 +9,7 @@ public class CategoryResponse {
     private Long totalElements;
     private Integer totalPages;
     private boolean lastPage;
-    
+
     public Integer getPageNumber() {
         return pageNumber;
     }
