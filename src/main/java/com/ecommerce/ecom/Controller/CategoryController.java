@@ -1,6 +1,7 @@
 package com.ecommerce.ecom.Controller;
 
 import com.ecommerce.ecom.Model.Category;
+import com.ecommerce.ecom.Payload.CategoryDTO;
 import com.ecommerce.ecom.Payload.CategoryResponse;
 import com.ecommerce.ecom.Service.CategoryService;
 import jakarta.validation.Valid;
@@ -20,9 +21,10 @@ public class CategoryController {
     public CategoryController(CategoryService categoryService){
         this.categoryService = categoryService;
     }
+
     @PostMapping("/admin/category")
-    public ResponseEntity<String> addCategory(@Valid @RequestBody Category category){
-        categoryService.addCategory(category);
+    public ResponseEntity<String> addCategory(@Valid @RequestBody CategoryDTO categoryDTO){
+        categoryService.addCategory(categoryDTO);
         return new ResponseEntity<>("Category created successfully", HttpStatus.CREATED);
     }
 
@@ -39,9 +41,10 @@ public class CategoryController {
     }
 
     @PutMapping("/admin/categories/{categoryid}")
-    public ResponseEntity<String> updateCategory(@PathVariable Long categoryid){
-            String message = categoryService.updateCategory(categoryid);
-            return new ResponseEntity<>(message, HttpStatus.OK);
+    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable Long categoryid,
+                                                 @RequestBody CategoryDTO categoryDTO){
+            CategoryDTO savedCategoryDTO = categoryService.updateCategory(categoryDTO, categoryid);
+            return new ResponseEntity<>(savedCategoryDTO, HttpStatus.OK);
     }
 
 }

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -41,11 +42,13 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public void addCategory(Category category) {
-        Category isAlreadyPresent = categoryRepository.findByCategoryName(category.getCategoryName());
+    public void addCategory(CategoryDTO categoryDTO) {
+        Category isAlreadyPresent = categoryRepository.findByCategoryName(categoryDTO.getCategoryName());
+
         if(isAlreadyPresent != null){
-            throw new ApiException(category.getCategoryName());
+            throw new ApiException(categoryDTO.getCategoryName());
         }
+        Category category = modelMapper.map(categoryDTO, Category.class);
         categoryRepository.save(category);
     }
 
@@ -62,15 +65,11 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public String updateCategory(Long categoryid){
-        Optional<Category> optionalCategory = categoryRepository.findById(categoryid);
-
-        if(optionalCategory.isPresent()){
-            Category updateCategory = optionalCategory.get();
-            updateCategory.setCategoryName(updateCategory.getCategoryName() + "updated");
-            categoryRepository.save(updateCategory);
-            return "Updated Successfully!";
-
-        }throw new ResourceNotFoundException("Category", categoryid);
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO, Long categoryid){
+        Category category = categoryRepository.findById(categoryid)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found!"));
+        category.setCategoryName(categoryDTO.getCategoryName());
+        categoryRepository.save(category);
+        return modelMapper.map(category, CategoryDTO.class);
     }
 }
