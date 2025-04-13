@@ -10,7 +10,7 @@ import java.util.List;
 public interface CategoryService {
     public CategoryResponse getAll();
     public void addCategory(CategoryDTO categoryDTO);
-    public String deleteCategory(Long categoryId);
+    public CategoryDTO deleteCategory(Long categoryId);
     public CategoryDTO updateCategory(CategoryDTO categoryDTO, Long categoryid);
 
 }
