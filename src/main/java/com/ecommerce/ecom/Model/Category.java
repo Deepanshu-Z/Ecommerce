@@ -12,8 +12,6 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long categoryId;
-    @NotBlank
-    @Size(min = 5, message = "Size must be greater than 5")
     private String categoryName;
 
     public Category(){}

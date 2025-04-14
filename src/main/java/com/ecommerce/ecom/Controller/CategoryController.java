@@ -31,10 +31,12 @@ public class CategoryController {
 
     @GetMapping("/public/categories")
     public ResponseEntity<CategoryResponse> getAll(
-            @RequestParam(defaultValue = AppConstants.page_number, required = false) Integer pageNumber,
-            @RequestParam(defaultValue = AppConstants.page_number, required = false) Integer pageSize
+            @RequestParam(name = "pageNumber", defaultValue = AppConstants.page_number, required = false) Integer pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = AppConstants.page_size, required = false) Integer pageSize,
+            @RequestParam(name = "sortBy", defaultValue = AppConstants.categories_sort_by, required = false) String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = AppConstants.sort_order, required = false) String sortOrder
     ){
-       CategoryResponse categories = categoryService.getAll(pageNumber, pageSize);
+       CategoryResponse categories = categoryService.getAll(pageNumber, pageSize, sortBy, sortOrder);
        return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 

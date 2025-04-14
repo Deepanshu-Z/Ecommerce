@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,11 +31,16 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     @Override
-    public CategoryResponse getAll(Integer pageNumber, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+    public CategoryResponse getAll(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+
+        Sort sortByandOrder = sortOrder.equalsIgnoreCase("asc")?
+                Sort.by(sortBy).ascending():
+                Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortByandOrder);
         Page<Category> pageDetails = categoryRepository.findAll(pageable);
         List<Category> categories =  pageDetails.getContent();
-        System.out.println("Total categories fetched: " + categories.size());
+
         if(categories.isEmpty()){
             throw new ResourceNotFoundException("No categories present, please add some categories first!");
         }
