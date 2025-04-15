@@ -1,9 +1,6 @@
 package com.ecommerce.ecom.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Product {
@@ -11,13 +8,25 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String productName;
-    private Integer productQuantity;
+    private Integer quantity;
     private String description;
     private double price;
     private double specialPrice;
 
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "category_Id")
+    private Category category;
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     public Product(){}
-    
+
     public Long getId() {
         return id;
     }
@@ -34,12 +43,12 @@ public class Product {
         this.productName = productName;
     }
 
-    public Integer getProductQuantity() {
-        return productQuantity;
+    public Integer getQuantity() {
+        return quantity;
     }
 
-    public void setProductQuantity(Integer productQuantity) {
-        this.productQuantity = productQuantity;
+    public void setQuantity(Integer productQuantity) {
+        this.quantity = productQuantity;
     }
 
     public String getDescription() {

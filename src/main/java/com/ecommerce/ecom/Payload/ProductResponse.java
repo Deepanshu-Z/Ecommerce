@@ -3,13 +3,13 @@ package com.ecommerce.ecom.Payload;
 import java.util.List;
 
 public class ProductResponse {
-    List<ProductDTO> productDTOS;
+    List<ProductDTO> content;
 
-    public List<ProductDTO> getProductDTOS() {
-        return productDTOS;
+    public List<ProductDTO> getContent() {
+        return content;
     }
 
-    public void setProductDTOS(List<ProductDTO> productDTOS) {
-        this.productDTOS = productDTOS;
+    public void setContent(List<ProductDTO> content) {
+        this.content = content;
     }
 }
