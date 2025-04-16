@@ -59,10 +59,15 @@ public class ProductServiceImpl implements ProductService{
     }
 
     //////////////////////////GET PRODUCTs by CATEGORY/////////////////////////////////////
-    public List<Product> getCategoryProduct(Long categoryId) {
+    public ProductResponse getCategoryProduct(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("No category available"));
-        List<Product> products = category.getProduct();
-        return products;
+        List<Product> products = productRepository.findByCategoryOrderByPrice(category);
+        List<ProductDTO> productDTO = products.stream()
+                .map(product -> modelMapper.map(product, ProductDTO.class))
+                .toList();
+        ProductResponse response = new ProductResponse();
+        response.setContent(productDTO);
+        return response;
     }
 }
