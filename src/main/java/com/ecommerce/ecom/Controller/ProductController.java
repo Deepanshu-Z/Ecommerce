@@ -1,5 +1,5 @@
 package com.ecommerce.ecom.Controller;
-import com.ecommerce.ecom.Model.Product;
+import com.ecommerce.ecom.Config.AppConstants;
 import com.ecommerce.ecom.Payload.ProductDTO;
 import com.ecommerce.ecom.Payload.ProductResponse;
 import com.ecommerce.ecom.Service.ProductService;
@@ -35,8 +35,13 @@ public class ProductController {
 
     //////////////////////////GET ALL PRODUCT/////////////////////////////////////
     @GetMapping("/admin/products")
-    public ResponseEntity<ProductResponse> getAllProducts(){
-        ProductResponse response = productService.getAllProducts();
+    public ResponseEntity<ProductResponse> getAllProducts(
+            @RequestParam(defaultValue = AppConstants.page_number, required = false) Integer pageNumber,
+            @RequestParam(defaultValue = AppConstants.page_size, required = false) Integer pageSize,
+            @RequestParam(defaultValue = AppConstants.products_sort_by, required = false) String sortBy,
+            @RequestParam(defaultValue = AppConstants.sort_order, required = false) String sortOrder
+    ){
+        ProductResponse response = productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

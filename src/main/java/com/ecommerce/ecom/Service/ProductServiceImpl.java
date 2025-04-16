@@ -13,6 +13,10 @@ import com.ecommerce.ecom.Repository.ProductRepository;
 import jakarta.annotation.Resource;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -58,14 +62,25 @@ public class ProductServiceImpl implements ProductService{
 
 
     //////////////////////////GET ALL PRODUCTs/////////////////////////////////////
-    public ProductResponse getAllProducts(){
-        List<Product> products = productRepository.findAll();
+    public ProductResponse getAllProducts( Integer pageNumber, Integer pageSize, String sortBy, String sortOrder ){
+        Sort sortOrderAndBy = sortOrder.equalsIgnoreCase("asc")?
+                Sort.by(sortBy).ascending():
+                Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortOrderAndBy);
+        Page<Product> pageDetails = productRepository.findAll(pageable);
+        List<Product> products = pageDetails.getContent();
         if (products.isEmpty()) throw new ResourceNotFoundException("No products present in the Database!");
         List<ProductDTO> productDTO = products.stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class))
                 .toList();
         ProductResponse response = new ProductResponse();
         response.setContent(productDTO);
+        response.setLastPage(pageDetails.isLast());
+        response.setPageNumber(pageNumber);
+        response.setPageSize(pageSize);
+        response.setTotalElements(pageDetails.getTotalElements());
+        response.setTotalPages(pageDetails.getTotalPages());
+
         return response;
     }
 
