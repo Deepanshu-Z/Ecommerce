@@ -85,6 +85,7 @@ public class ProductServiceImpl implements ProductService{
     //////////////////////////GET PRODUCTs by KEY/////////////////////////////////////
     public ProductResponse getKeyProduct(String key) {
         List<Product> products = productRepository.findByProductNameLikeIgnoreCase("%" + key + "%");
+        if(products.isEmpty()) throw new ResourceNotFoundException("No products with " + key + " found!");
         List<ProductDTO> productDTO = products.stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class))
                 .toList();

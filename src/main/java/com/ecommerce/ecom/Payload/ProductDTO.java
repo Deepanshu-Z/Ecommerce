@@ -1,13 +1,20 @@
 package com.ecommerce.ecom.Payload;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class ProductDTO {
 
     private Long productId;
+
+    @NotNull
+    @Size(min = 3, max = 10)
     private String productName;
     private Integer quantity;
+    @Size(min = 10, max = 500)
     private String description;
+    @NotNull
     private double price;
     private String image;
     private double specialPrice;
