@@ -32,10 +32,11 @@ public class ProductServiceImpl implements ProductService{
     }
 
     //////////////////////////ADDING PRODUCT/////////////////////////////////////
-    public ProductDTO addProduct(Long categoryId, Product product) {
+    public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Category NOT FOUND!"));
+        Product product = modelMapper.map(productDTO, Product.class);
         Optional<Product> productExist = productRepository.findByProductName(product.getProductName());
         if(productExist.isPresent()) throw new ApiException(product.getProductName());
 
@@ -84,17 +85,29 @@ public class ProductServiceImpl implements ProductService{
         response.setContent(productDTO);
         return response;
     }
-    //////////////////////////UPDATE PRODUCT/////////////////////////////////////
-    public ProductDTO updateProduct(Product product, Long productId) {
-        Optional<Product> existingProduct = productRepository.findById(productId);
-        if(existingProduct.isEmpty()) throw new ResourceNotFoundException(product.getProductName() + " does not exist");
-        Product updateProduct = existingProduct.get();
-        updateProduct.setProductName(product.getProductName());
-        updateProduct.setDescription(product.getDescription());
-        updateProduct.setQuantity(product.getQuantity());
-        productRepository.save(updateProduct);
-        ProductDTO productDTO = modelMapper.map(updateProduct, ProductDTO.class);
-        return productDTO;
+    ////////////////////////// UPDATE PRODUCT /////////////////////////////////
+    public ProductDTO updateProduct(ProductDTO productDTO, Long productId) {
+        Optional<Product> existingProductOptional = productRepository.findById(productId);
+
+        // If product not found, throw exception
+        if (existingProductOptional.isEmpty()) {
+            throw new ResourceNotFoundException("Product with ID " + productId + " does not exist");
+        }
+
+        // Get the existing product
+        Product existingProduct = existingProductOptional.get();
+
+        // Update fields — this prevents overwriting the ID or accidentally mapping nulls
+        existingProduct.setProductName(productDTO.getProductName());
+        existingProduct.setDescription(productDTO.getDescription());
+        existingProduct.setQuantity(productDTO.getQuantity());
+        // Add more fields as needed (price, category, etc.)
+
+        // Save updated product
+        Product updatedProduct = productRepository.save(existingProduct);
+
+        // Return updated DTO
+        return modelMapper.map(updatedProduct, ProductDTO.class);
     }
 
     //////////////////DELETE PRODUCT/////////////////////////////////////////
