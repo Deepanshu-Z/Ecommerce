@@ -1,18 +1,16 @@
 package com.ecommerce.ecom.Controller;
-
-import com.ecommerce.ecom.Model.Category;
 import com.ecommerce.ecom.Model.Product;
-import com.ecommerce.ecom.Payload.CategoryDTO;
 import com.ecommerce.ecom.Payload.ProductDTO;
 import com.ecommerce.ecom.Payload.ProductResponse;
 import com.ecommerce.ecom.Service.ProductService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.awt.*;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
@@ -67,6 +65,14 @@ public class ProductController {
     @DeleteMapping("/admin/category/delete/product/{productId}")
     public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long productId){
         ProductDTO productDTO =  productService.deleteProduct(productId);
+        return new ResponseEntity<>(productDTO, HttpStatus.OK);
+    }
+
+    //////////////////////////UPLOAD IMAGE /////////////////////////////////////
+    @PutMapping("/admin/category/update/image/{productId}")
+    public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId,
+                                                  @RequestParam("image")MultipartFile image) throws IOException {
+        ProductDTO productDTO = productService.updateProductImage(productId, image);
         return new ResponseEntity<>(productDTO, HttpStatus.OK);
     }
 }

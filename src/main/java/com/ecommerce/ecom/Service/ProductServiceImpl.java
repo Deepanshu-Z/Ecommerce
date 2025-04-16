@@ -10,14 +10,21 @@ import com.ecommerce.ecom.Payload.ProductDTO;
 import com.ecommerce.ecom.Payload.ProductResponse;
 import com.ecommerce.ecom.Repository.CategoryRepository;
 import com.ecommerce.ecom.Repository.ProductRepository;
+import jakarta.annotation.Resource;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService{
@@ -117,5 +124,42 @@ public class ProductServiceImpl implements ProductService{
         ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
         productRepository.delete(product);
         return productDTO;
+    }
+
+
+    ///////////////UPLOAD IMAGE TO SERVER///////////////////////////////////
+    public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
+        //get the product from db
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product ID is not valid or product is not present"));
+
+        //upload it to server
+        //get the filename in which it is uploaded
+        String path = "images/";
+        String filename = uploadImage(path, image);
+
+        //save it
+        product.setImage(filename);
+        productRepository.save(product);
+
+        //and return dto
+        return modelMapper.map(product, ProductDTO.class);
+    }
+
+    private String uploadImage(String path, MultipartFile image) throws IOException {
+        //fetch the image file name
+        String imageFileName = image.getOriginalFilename();
+
+        //generate a unique file name so name does not clashes
+        String uniqueId = UUID.randomUUID().toString();
+        String fileName = uniqueId.concat(imageFileName.substring(imageFileName.lastIndexOf('.')));
+        String filePath = path + File.separator + fileName;
+        //check if path exist or else create
+        File folder = new File(path);
+        if(!folder.exists()) folder.mkdir();
+        //upload to server
+        Files.copy(image.getInputStream(), Paths.get(filePath));
+        //return file name
+        return fileName;
     }
 }
