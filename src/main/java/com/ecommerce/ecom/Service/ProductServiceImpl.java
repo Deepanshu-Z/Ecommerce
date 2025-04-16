@@ -85,29 +85,57 @@ public class ProductServiceImpl implements ProductService{
     }
 
     //////////////////////////GET PRODUCTs by CATEGORY/////////////////////////////////////
-    public ProductResponse getCategoryProduct(Long categoryId) {
+    public ProductResponse getCategoryProduct(Long categoryId, Integer pageNumber,  Integer pageSize, String sortBy, String sortOrder) {
+        Sort sortOrderAndBy = sortOrder.equalsIgnoreCase("asc")?
+                Sort.by(sortBy).ascending():
+                Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortOrderAndBy);
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("No category available"));
-        List<Product> products = productRepository.findByCategoryOrderByPrice(category);
+        Page<Product> pageDetails = productRepository.findByCategory(category, pageable);
+        List<Product> products = pageDetails.getContent();
+
         List<ProductDTO> productDTO = products.stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class))
                 .toList();
         ProductResponse response = new ProductResponse();
         response.setContent(productDTO);
+        response.setPageNumber(pageDetails.getNumber());
+        response.setPageSize(pageDetails.getSize());
+        response.setTotalElements(pageDetails.getTotalElements());
+        response.setTotalPages(pageDetails.getTotalPages());
+        response.setLastPage(pageDetails.isLast());
         return response;
     }
 
-    //////////////////////////GET PRODUCTs by KEY/////////////////////////////////////
-    public ProductResponse getKeyProduct(String key) {
-        List<Product> products = productRepository.findByProductNameLikeIgnoreCase("%" + key + "%");
-        if(products.isEmpty()) throw new ResourceNotFoundException("No products with " + key + " found!");
-        List<ProductDTO> productDTO = products.stream()
+    public ProductResponse getKeyProduct(String key, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sortOrderAndBy = sortOrder.equalsIgnoreCase("asc") ?
+                Sort.by(sortBy).ascending() :
+                Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortOrderAndBy);
+
+        Page<Product> pageDetails = productRepository.findByProductNameContainingIgnoreCase(key, pageable);
+
+        if (pageDetails.isEmpty()) {
+            throw new ResourceNotFoundException("No products with key: " + key + " found!");
+        }
+
+        List<ProductDTO> productDTOs = pageDetails.getContent().stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class))
                 .toList();
+
         ProductResponse response = new ProductResponse();
-        response.setContent(productDTO);
+        response.setContent(productDTOs);
+        response.setPageNumber(pageDetails.getNumber());
+        response.setPageSize(pageDetails.getSize());
+        response.setTotalElements(pageDetails.getTotalElements());
+        response.setTotalPages(pageDetails.getTotalPages());
+        response.setLastPage(pageDetails.isLast());
+
         return response;
     }
+
     ////////////////////////// UPDATE PRODUCT /////////////////////////////////
     public ProductDTO updateProduct(ProductDTO productDTO, Long productId) {
         Optional<Product> existingProductOptional = productRepository.findById(productId);
