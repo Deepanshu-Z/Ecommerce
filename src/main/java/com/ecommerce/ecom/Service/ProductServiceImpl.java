@@ -1,6 +1,7 @@
 package com.ecommerce.ecom.Service;
 
 import com.ecommerce.ecom.Controller.ProductController;
+import com.ecommerce.ecom.ExceptionHandler.ApiException;
 import com.ecommerce.ecom.ExceptionHandler.ResourceNotFoundException;
 import com.ecommerce.ecom.Model.Category;
 import com.ecommerce.ecom.Model.Product;
@@ -35,6 +36,8 @@ public class ProductServiceImpl implements ProductService{
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Category NOT FOUND!"));
+        Optional<Product> productExist = productRepository.findByProductName(product.getProductName());
+        if(productExist.isPresent()) throw new ApiException(product.getProductName());
 
         product.setImage("default.png");
         product.setCategory(category);
@@ -69,5 +72,37 @@ public class ProductServiceImpl implements ProductService{
         ProductResponse response = new ProductResponse();
         response.setContent(productDTO);
         return response;
+    }
+
+    //////////////////////////GET PRODUCTs by KEY/////////////////////////////////////
+    public ProductResponse getKeyProduct(String key) {
+        List<Product> products = productRepository.findByProductNameLikeIgnoreCase("%" + key + "%");
+        List<ProductDTO> productDTO = products.stream()
+                .map(product -> modelMapper.map(product, ProductDTO.class))
+                .toList();
+        ProductResponse response = new ProductResponse();
+        response.setContent(productDTO);
+        return response;
+    }
+    //////////////////////////UPDATE PRODUCT/////////////////////////////////////
+    public ProductDTO updateProduct(Product product, Long productId) {
+        Optional<Product> existingProduct = productRepository.findById(productId);
+        if(existingProduct.isEmpty()) throw new ResourceNotFoundException(product.getProductName() + " does not exist");
+        Product updateProduct = existingProduct.get();
+        updateProduct.setProductName(product.getProductName());
+        updateProduct.setDescription(product.getDescription());
+        updateProduct.setQuantity(product.getQuantity());
+        productRepository.save(updateProduct);
+        ProductDTO productDTO = modelMapper.map(updateProduct, ProductDTO.class);
+        return productDTO;
+    }
+
+    //////////////////DELETE PRODUCT/////////////////////////////////////////
+    public ProductDTO deleteProduct(Long productId){
+        Product product = productRepository.findById(productId)
+                .orElseThrow( () -> new ResourceNotFoundException("Product does not found to be deleted"));
+        ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
+        productRepository.delete(product);
+        return productDTO;
     }
 }
