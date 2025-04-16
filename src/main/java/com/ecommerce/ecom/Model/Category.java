@@ -1,11 +1,10 @@
 package com.ecommerce.ecom.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import java.util.List;
 
 @Entity(name = "categories")
 public class Category {
@@ -13,8 +12,18 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long categoryId;
     private String categoryName;
-
+    @OneToMany(mappedBy = "category")
+    private List<Product> product;
     public Category(){}
+
+    public List<Product> getProduct() {
+        return product;
+    }
+
+    public void setProduct(List<Product> product) {
+        this.product = product;
+    }
+
     public void setCategoryId(Long categoryId){
         this.categoryId = categoryId;
     }

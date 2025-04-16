@@ -1,5 +1,6 @@
 package com.ecommerce.ecom.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -8,17 +9,35 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String productName;
+    private String image;
     private Integer quantity;
     private String description;
     private double price;
+    private double discount;
     private double specialPrice;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "category_Id")
+    @JsonIgnore
     private Category category;
 
     public Category getCategory() {
         return category;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
     }
 
     public void setCategory(Category category) {

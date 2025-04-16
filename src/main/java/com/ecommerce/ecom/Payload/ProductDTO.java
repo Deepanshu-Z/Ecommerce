@@ -1,5 +1,7 @@
 package com.ecommerce.ecom.Payload;
 
+import jakarta.validation.Valid;
+
 public class ProductDTO {
 
     private Long productId;
@@ -10,6 +12,17 @@ public class ProductDTO {
     private String image;
     private double specialPrice;
     private double discount;
+
+    @Valid
+    private CategoryDTO categoryDTO;
+
+    public CategoryDTO getCategoryDTO() {
+        return categoryDTO;
+    }
+
+    public void setCategoryDTO(CategoryDTO categoryDTO) {
+        this.categoryDTO = categoryDTO;
+    }
 
     public Long getProductId() {
         return productId;
