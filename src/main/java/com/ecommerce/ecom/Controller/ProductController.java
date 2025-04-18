@@ -34,7 +34,7 @@ public class ProductController {
 
 
     //////////////////////////GET ALL PRODUCT/////////////////////////////////////
-    @GetMapping("/admin/products")
+    @GetMapping("/public/products")
     public ResponseEntity<ProductResponse> getAllProducts(
             @RequestParam(defaultValue = AppConstants.page_number, required = false) Integer pageNumber,
             @RequestParam(defaultValue = AppConstants.page_size, required = false) Integer pageSize,
@@ -46,7 +46,7 @@ public class ProductController {
     }
 
     //////////////////////////GET PRODUCT BY CATEGORY/////////////////////////////////////
-    @GetMapping("/admin/category/get/{categoryId}/product")
+    @GetMapping("/public/category/get/{categoryId}/product")
     public ResponseEntity<ProductResponse> getCategoryProduct(@PathVariable Long categoryId,
                                                               @RequestParam(defaultValue = AppConstants.page_number, required = false) Integer pageNumber,
                                                               @RequestParam(defaultValue = AppConstants.page_size, required = false) Integer pageSize,
