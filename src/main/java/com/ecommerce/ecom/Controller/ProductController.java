@@ -58,7 +58,7 @@ public class ProductController {
     }
 
     //////////////////////////GET PRODUCT BY KEY/////////////////////////////////////
-    @GetMapping("/admin/category/get/product/{key}")
+    @GetMapping("/public/category/get/product/{key}")
     public ResponseEntity<ProductResponse> getCategoryProduct(@PathVariable String key,
                                                               @RequestParam(defaultValue = AppConstants.page_number, required = false) Integer pageNumber,
                                                               @RequestParam(defaultValue = AppConstants.page_size, required = false) Integer pageSize,
@@ -85,7 +85,7 @@ public class ProductController {
     }
 
     //////////////////////////UPLOAD IMAGE /////////////////////////////////////
-    @PutMapping("/admin/category/update/image/{productId}")
+    @PutMapping("/public/category/update/image/{productId}")
     public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId,
                                                   @RequestParam("image")MultipartFile image) throws IOException {
         ProductDTO productDTO = productService.updateProductImage(productId, image);
