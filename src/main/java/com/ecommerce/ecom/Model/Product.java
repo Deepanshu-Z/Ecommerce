@@ -20,6 +20,10 @@ public class Product {
     @JsonIgnore
     private Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "seller_Id")
+    private User user;
+
     public Category getCategory() {
         return category;
     }
