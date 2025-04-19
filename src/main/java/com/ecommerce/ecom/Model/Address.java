@@ -1,6 +1,7 @@
 package com.ecommerce.ecom.Model;
 
 import com.ecommerce.ecom.Model.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -39,6 +40,7 @@ public class Address {
     private String pincode;
 
     @ManyToMany(mappedBy = "addresses")
+    @JsonIgnore
     private List<User> users = new ArrayList<>();
 
     public String getStreet() {
