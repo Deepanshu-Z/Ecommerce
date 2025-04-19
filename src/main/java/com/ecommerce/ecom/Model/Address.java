@@ -39,7 +39,7 @@ public class Address {
     @Size(min = 6, message = "Pincode must be atleast 6 characters")
     private String pincode;
 
-    @ManyToMany(mappedBy = "addresses")
+    @ManyToMany()
     @JsonIgnore
     private List<User> users = new ArrayList<>();
 
