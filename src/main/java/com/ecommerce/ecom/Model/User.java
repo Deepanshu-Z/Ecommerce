@@ -10,6 +10,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Table(name = "Users", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "email"),
+        @UniqueConstraint(columnNames = "username")
+})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,11 +21,13 @@ public class User {
 
     @NotBlank
     @Size(max = 20)
+    @Column(name = "username")
     private String userName;
 
     @NotBlank
     @Size(max=50)
     @Email
+    @Column(name = "email")
     private String email;
 
     @NotBlank
