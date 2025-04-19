@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JoinColumn(name = "role_id")
     private Long roleId;
 
     @Enumerated(EnumType.STRING) //so that it doesnt store as Integer in DB
