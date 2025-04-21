@@ -133,4 +133,13 @@ public class AuthController {
 
         }
 
+        @GetMapping("/username")
+        public String currentUsername(Authentication authentication){
+            if(authentication != null){
+                return authentication.getName();
+            }else{
+                return "";
+            }
+        }
+
 }
