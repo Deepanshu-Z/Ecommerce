@@ -3,6 +3,7 @@ package com.ecommerce.ecom.Controller;
 import com.ecommerce.ecom.Model.AppRole;
 import com.ecommerce.ecom.Model.Role;
 import com.ecommerce.ecom.Model.User;
+import com.ecommerce.ecom.Repository.RoleRepository;
 import com.ecommerce.ecom.Repository.UserRepository;
 import com.ecommerce.ecom.Security.jwt.JwtUtils;
 import com.ecommerce.ecom.Security.jwt.LoginRequest;
@@ -71,11 +72,11 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUserName(signUpRequest.getUsername())) {
-            return ResponseEntity.badRequest().body(new ResponseEntity<>("Error: Username is already in use!", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(new ResponseEntity<>("Error: Username is already in use!", HttpStatus.BAD_REQUEST));
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new ResponseEntity<>("Error: Email is already in use!", HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(new ResponseEntity<>("Error: Email is already in use!", HttpStatus.BAD_REQUEST));
         }
 
         // Create new user's account
@@ -116,7 +117,7 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new new ResponseEntity<>("User registered successfully!", HttpStatus.CREATED);
+        return ResponseEntity.ok(new ResponseEntity<>("User registered successfully!", HttpStatus.CREATED));
     }
 
 }
