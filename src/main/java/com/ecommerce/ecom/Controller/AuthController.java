@@ -142,4 +142,17 @@ public class AuthController {
             }
         }
 
+    @GetMapping("/user")
+    public ResponseEntity<?> currentUserDetails(Authentication authentication){
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .toList();
+
+        LoginResponse response = new LoginResponse(userDetails.getId(), userDetails.getUsername(),
+                                                    roles);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }
