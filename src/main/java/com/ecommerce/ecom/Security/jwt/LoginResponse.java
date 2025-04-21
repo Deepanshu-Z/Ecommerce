@@ -3,6 +3,7 @@ package com.ecommerce.ecom.Security.jwt;
 import java.util.List;
 
 public class LoginResponse {
+    private Long id;
     private String jwtToken;
 
     private String username;
@@ -12,6 +13,22 @@ public class LoginResponse {
         this.username = username;
         this.roles = roles;
         this.jwtToken = jwtToken;
+    }
+
+    public LoginResponse(Long id, String username, List<String> roles) {
+        this.id = id;
+        this.username = username;
+        this.roles = roles;
+    }
+
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getJwtToken() {
