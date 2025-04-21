@@ -61,6 +61,10 @@ public class User {
         this.password = encode;
     }
 
+    public User() {
+
+    }
+
     public Set<Product> getProducts() {
         return products;
     }
