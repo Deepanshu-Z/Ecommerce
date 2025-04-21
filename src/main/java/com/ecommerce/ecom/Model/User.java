@@ -55,6 +55,12 @@ public class User {
     @JsonIgnore
     private Set<Product> products;
 
+    public User(String username, String email, String encode) {
+        this.username = username;
+        this.email = email;
+        this.password = encode;
+    }
+
     public Set<Product> getProducts() {
         return products;
     }

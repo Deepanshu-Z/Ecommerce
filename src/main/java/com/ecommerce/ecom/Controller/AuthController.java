@@ -1,9 +1,15 @@
 package com.ecommerce.ecom.Controller;
 
+import com.ecommerce.ecom.Model.AppRole;
+import com.ecommerce.ecom.Model.Role;
+import com.ecommerce.ecom.Model.User;
+import com.ecommerce.ecom.Repository.UserRepository;
 import com.ecommerce.ecom.Security.jwt.JwtUtils;
 import com.ecommerce.ecom.Security.jwt.LoginRequest;
 import com.ecommerce.ecom.Security.jwt.LoginResponse;
+import com.ecommerce.ecom.Security.services.SignupRequest;
 import com.ecommerce.ecom.Security.services.UserDetailsImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +18,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class AuthController {
@@ -28,7 +34,16 @@ public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
 
-    @GetMapping("/auth/signin")
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    PasswordEncoder encoder;
+
+    @Autowired
+    RoleRepository roleRepository;
+
+    @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser (@RequestBody LoginRequest loginRequest){
         Authentication authentication;
         try{
@@ -53,6 +68,55 @@ public class AuthController {
         LoginResponse loginResponse = new LoginResponse(userDetails.getUsername(), roles, jwtToken);
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        if (userRepository.existsByUserName(signUpRequest.getUsername())) {
+            return ResponseEntity.badRequest().body(new ResponseEntity<>("Error: Username is already in use!", HttpStatus.BAD_REQUEST);
+        }
 
+        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            return ResponseEntity.badRequest().body(new ResponseEntity<>("Error: Email is already in use!", HttpStatus.BAD_REQUEST);
+        }
+
+        // Create new user's account
+        User user = new User(signUpRequest.getUsername(),
+                signUpRequest.getEmail(),
+                encoder.encode(signUpRequest.getPassword()));
+
+        Set<String> strRoles = signUpRequest.getRole();
+        Set<Role> roles = new HashSet<>();
+
+        if (strRoles == null) {
+            Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(userRole);
+        } else {
+            strRoles.forEach(role -> {
+                switch (role) {
+                    case "admin":
+                        Role adminRole = roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(adminRole);
+
+                        break;
+                    case "seller":
+                        Role modRole = roleRepository.findByRoleName(AppRole.ROLE_SELLER)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(modRole);
+
+                        break;
+                    default:
+                        Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(userRole);
+                }
+            });
+        }
+
+        user.setRoles(roles);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(new new ResponseEntity<>("User registered successfully!", HttpStatus.CREATED);
+    }
 
 }
