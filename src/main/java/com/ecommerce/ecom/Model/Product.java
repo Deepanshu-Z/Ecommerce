@@ -1,9 +1,13 @@
 package com.ecommerce.ecom.Model;
 import com.ecommerce.ecom.Model.Category;
 import com.ecommerce.ecom.Model.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import java.util.List;
 
 @Entity
 public class Product {
@@ -32,6 +36,10 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "seller_id")
     private User user;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<CartItems> products;
 
     public String getImage() {
         return image;

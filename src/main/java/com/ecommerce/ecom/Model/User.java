@@ -55,6 +55,18 @@ public class User {
     @JsonIgnore
     private Set<Product> products;
 
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JsonIgnore
+    private Cart cart;
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
     public User(String username, String email, String encode) {
         this.username = username;
         this.email = email;
