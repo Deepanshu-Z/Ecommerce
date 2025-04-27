@@ -33,38 +33,27 @@ public class CartServiceImpl implements CartService{
     private CartRepository cartRepository;
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    AuthUtil authUtil;
+    
     public CartDTO addProductToCart(Long productId, Integer quantity){
         Cart cart = createCart();
-        Optional<Product> productExist = productRepository.findById(productId);
-        if(productExist.isEmpty()) throw new RuntimeException("Product Not Available");
 
-        Product productDetails = productExist.get();
-        CartItems cartItems = new CartItems();
-        cartItems.setCart(cart);
-        cartItems.setDiscount(10.00);
-        cartItems.setProduct(productDetails);
-        cartItems.setQuantity(quantity);
-        cartItems.setProductPrice((productDetails.getPrice() * quantity) - cartItems.getDiscount());
-        cartItemRepository.save(cartItems);
-        List<CartItems> cartItemsList = cart.getCartItems();
-        cartItemsList.add(cartItems);
-        cartRepository.save(cart);
-        CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+
+
         return cartDTO;
     }
 
     private Cart createCart() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User userDetails = (User) authentication.getPrincipal();
-        Cart cart = userDetails.getCart();
-        if(cart == null){
-            cart = new Cart();
-            cart.setUser(userDetails);
-            cart.setCartItems(new ArrayList<>());
-            userDetails.setCart(cart);
-            userRepository.save(userDetails);
-        }
-        return cart;
-        }
+
+        Cart userCart = cartRepository.findCartByEmail(authUtil.loggedInEmail());
+
+        if(userCart != null) return userCart;
+
+        Cart newCart = new Cart();
+        newCart.setUser(authUtil.loggedInUser());
+        newCart.setTotalPrice(0.0);
+        return cartRepository.save(newCart);
+
+    }
 }
