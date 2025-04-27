@@ -45,6 +45,14 @@ public class Product {
         return image;
     }
 
+    public Long getProductId() {
+        return productId;
+    }
+
+    public List<CartItems> getProducts() {
+        return products;
+    }
+
     public void setImage(String image) {
         this.image = image;
     }
