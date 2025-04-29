@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.Path;
 import java.util.List;
 
 @RestController
@@ -46,4 +47,11 @@ public class CartController {
         return new ResponseEntity<>(cartService.getUserCart(email, cartId), HttpStatus.OK) ;
     }
 
+    //////////////UPDATE CART QUANTITY/////////////////////////
+    @PutMapping("/public/cart/products/{productId}/quantity/{operation}")
+    public ResponseEntity<CartDTO> updateQuantity(@PathVariable Long productId,
+                                           @PathVariable String operation){
+        CartDTO cartDTO = cartService.updateQuantity(productId, operation.equalsIgnoreCase("delete")?-1:1);
+        return new ResponseEntity<>(cartDTO, HttpStatus.OK);
+    }
 }

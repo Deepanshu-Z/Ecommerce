@@ -13,6 +13,7 @@ import com.ecommerce.ecom.Repository.CartRepository;
 import com.ecommerce.ecom.Repository.ProductRepository;
 import com.ecommerce.ecom.Repository.UserRepository;
 import com.ecommerce.ecom.Util.AuthUtil;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -40,6 +41,7 @@ public class CartServiceImpl implements CartService {
     @Autowired
     AuthUtil authUtil;
 
+    @Override
     public CartDTO addProductToCart(Long productId, Integer quantity) {
         Cart cart = createCart();
 
@@ -104,6 +106,7 @@ public class CartServiceImpl implements CartService {
     }
 
     /////////////////GET ALL CARTS/////////////////////////////
+    @Override
     public List<CartDTO> getAllCarts() {
         List<Cart> carts = cartRepository.findAll();
         if(carts.isEmpty()) throw new ApiException("No carts items present!");
@@ -120,14 +123,69 @@ public class CartServiceImpl implements CartService {
     }
 
     /////////////////GET CART BY ID/////////////////////////////
+    @Override
     public CartDTO getUserCart(String email, Long cartId){
         Cart cart = cartRepository.findCartByEmail(email);
+        if(cart == null) throw new ApiException("Cart not found!");
+
         CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
         cart.getCartItems().forEach(items -> items.getProduct().setQuantity(items.getQuantity()));
         List<ProductDTO> productDTO = cart.getCartItems().stream()
                 .map(cartItems -> modelMapper.map(cartItems.getProduct(), ProductDTO.class))
                 .toList();
         cartDTO.setProducts(productDTO);
+        return cartDTO;
+    }
+
+
+    ////////////UPDATE CART QUANTITY/////////////////////////
+    @Transactional
+    @Override
+    public CartDTO updateQuantity(Long productId, Integer quantity){
+        String email = authUtil.loggedInEmail();
+        Cart cart = cartRepository.findCartByEmail(email);
+        if(cart == null) throw new ApiException("Cart is not present");
+
+        Long cartId = cart.getCartId();
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product is not available"));
+
+        if (product.getQuantity() == 0) {
+            throw new ApiException("Product is not available");
+        }
+
+        if (product.getQuantity() < quantity) {
+            throw new ApiException("Please, make an order less than or equal to the quantity " + product.getQuantity());
+        }
+
+        CartItems cartItems = cartItemRepository.findCartItemByProductIdAndCartId(cartId, productId);
+        if (cartItems == null) {
+            throw new ApiException("Product not available in the cart!!!");
+        }
+
+        cartItems.setProductPrice(product.getSpecialPrice());
+        cartItems.setQuantity(cartItems.getQuantity() + quantity);
+        cartItems.setDiscount(product.getDiscount());
+        cart.setTotalPrice(cart.getTotalPrice() + (cartItems.getProductPrice() * quantity));
+        cartRepository.save(cart);
+
+        CartItems updatedItem = cartItemRepository.save(cartItems);
+        if(updatedItem.getQuantity() == 0){
+            cartItemRepository.deleteById(updatedItem.getCartItemId());
+        }
+        CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+
+        List<CartItems> cartItemsList = cart.getCartItems();
+        Stream<ProductDTO> productStream = cartItemsList.stream().map(item -> {
+            ProductDTO prd = modelMapper.map(item.getProduct(), ProductDTO.class);
+            prd.setQuantity(item.getQuantity());
+            return prd;
+        });
+
+
+        cartDTO.setProducts(productStream.toList());
+
         return cartDTO;
     }
 }

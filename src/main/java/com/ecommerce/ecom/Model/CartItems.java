@@ -25,6 +25,10 @@ public class CartItems {
         return cart;
     }
 
+    public Long getCartItemId() {
+        return cartItemId;
+    }
+
     public void setCart(Cart cart) {
         this.cart = cart;
     }
