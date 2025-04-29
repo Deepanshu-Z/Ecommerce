@@ -190,6 +190,7 @@ public class CartServiceImpl implements CartService {
     }
 
         ////////////////DELETE PRODUCT FROM CART//////////////////
+        @Transactional
         @Override
         public String removeProduct(Long cartId, Long productId) {
             Cart cart = cartRepository.findById(cartId)
