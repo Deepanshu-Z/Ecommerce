@@ -103,11 +103,11 @@ public class CartServiceImpl implements CartService {
 
     }
 
-    /// //////////////GET ALL CARTS/////////////////////////////
+    /////////////////GET ALL CARTS/////////////////////////////
     public List<CartDTO> getAllCarts() {
         List<Cart> carts = cartRepository.findAll();
         if(carts.isEmpty()) throw new ApiException("No carts items present!");
-        
+
         List<CartDTO> cartDTOs = carts.stream().map(cart -> {
             CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
             List<ProductDTO> productDTO = cart.getCartItems().stream()
@@ -117,6 +117,18 @@ public class CartServiceImpl implements CartService {
         }).toList();
 
         return cartDTOs;
+    }
+
+    /////////////////GET CART BY ID/////////////////////////////
+    public CartDTO getUserCart(String email, Long cartId){
+        Cart cart = cartRepository.findCartByEmail(email);
+        CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+        cart.getCartItems().forEach(items -> items.getProduct().setQuantity(items.getQuantity()));
+        List<ProductDTO> productDTO = cart.getCartItems().stream()
+                .map(cartItems -> modelMapper.map(cartItems.getProduct(), ProductDTO.class))
+                .toList();
+        cartDTO.setProducts(productDTO);
+        return cartDTO;
     }
 }
 
