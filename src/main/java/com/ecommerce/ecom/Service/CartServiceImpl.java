@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
-public class CartServiceImpl implements CartService{
+public class CartServiceImpl implements CartService {
 
     @Autowired
     private ProductRepository productRepository;
@@ -93,7 +93,7 @@ public class CartServiceImpl implements CartService{
 
         Cart userCart = cartRepository.findCartByEmail(authUtil.loggedInEmail());
 
-        if(userCart != null) return userCart;
+        if (userCart != null) return userCart;
 
         Cart newCart = new Cart();
         newCart.setUser(authUtil.loggedInUser());
@@ -102,4 +102,21 @@ public class CartServiceImpl implements CartService{
         return cartRepository.save(newCart);
 
     }
+
+    /// //////////////GET ALL CARTS/////////////////////////////
+    public List<CartDTO> getAllCarts() {
+        List<Cart> carts = cartRepository.findAll();
+        if(carts.isEmpty()) throw new ApiException("No carts items present!");
+        
+        List<CartDTO> cartDTOs = carts.stream().map(cart -> {
+            CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+            List<ProductDTO> productDTO = cart.getCartItems().stream()
+                    .map(item -> modelMapper.map(item.getProduct(), ProductDTO.class)).toList();
+            cartDTO.setProducts(productDTO);
+            return cartDTO;
+        }).toList();
+
+        return cartDTOs;
+    }
 }
+
