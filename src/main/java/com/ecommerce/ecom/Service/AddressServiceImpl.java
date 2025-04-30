@@ -25,7 +25,7 @@ public class AddressServiceImpl implements AddressService{
     private AddressRepository addressRepository;
 
     /// //////////Create ADDRESS////////////////
-    public String createAddress(AddressDTO addressDTO){
+    public AddressDTO createAddress(AddressDTO addressDTO){
         Address address = modelMapper.map(addressDTO, Address.class);
 
         User user = authUtil.loggedInUser();
@@ -34,8 +34,32 @@ public class AddressServiceImpl implements AddressService{
         address.setUser(user);
         user.getAddresses().add(address);
 
+        addressRepository.save(address);
         userRepository.save(user);
 
-        return "Address Successfully added";
+        return modelMapper.map(address, AddressDTO.class);
+    }
+
+    ///GET getUserSpecificAddress///////////
+    public List<AddressDTO> getUserSpecificAddress(User user){
+        List<Address> addressList = user.getAddresses();
+        if(addressList.isEmpty()) throw new ApiException("Please add some address");
+
+        List<AddressDTO> addressDTOS = addressList.stream()
+                .map(item -> modelMapper.map(item, AddressDTO.class))
+                .toList();
+
+        return addressDTOS;
+    }
+
+    //GET ALL ADDRESSES////////////
+    public List<AddressDTO> getAllAddresses(){
+        List<Address> addressList = addressRepository.findAll();
+        if(addressList.isEmpty()) throw new ApiException("No addresses found");
+
+        List<AddressDTO> addressDTOS = addressList.stream()
+                .map(item -> modelMapper.map(item, AddressDTO.class))
+                .toList();
+        return addressDTOS;
     }
 }

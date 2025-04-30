@@ -1,7 +1,13 @@
 package com.ecommerce.ecom.Service;
 
+import com.ecommerce.ecom.Model.User;
 import com.ecommerce.ecom.Payload.AddressDTO;
 
+import java.util.List;
+
 public interface AddressService {
-    String createAddress(AddressDTO addressDTO);
+    AddressDTO createAddress(AddressDTO addressDTO);
+
+    List<AddressDTO> getUserSpecificAddress(User user);
+    List<AddressDTO> getAllAddresses();
 }
