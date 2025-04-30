@@ -52,7 +52,7 @@ public class AddressServiceImpl implements AddressService{
         return addressDTOS;
     }
 
-    //GET ALL ADDRESSES////////////
+    //////GET ALL ADDRESSES////////////
     public List<AddressDTO> getAllAddresses(){
         List<Address> addressList = addressRepository.findAll();
         if(addressList.isEmpty()) throw new ApiException("No addresses found");
@@ -61,5 +61,26 @@ public class AddressServiceImpl implements AddressService{
                 .map(item -> modelMapper.map(item, AddressDTO.class))
                 .toList();
         return addressDTOS;
+    }
+
+    ///////Update Address///////
+    public AddressDTO updateAddress(Long addressId, AddressDTO addressDTO){
+       Address address = addressRepository.findById(addressId)
+               .orElseThrow(() -> new ApiException("Address not found, please tell a valid address."));
+
+       address.setBuildingName(addressDTO.getBuildingName());
+       address.setCity(addressDTO.getCity());
+       address.setCountry(addressDTO.getCountry());
+       address.setPincode(addressDTO.getPincode());
+       address.setState(addressDTO.getState());
+       address.setStreet(addressDTO.getStreet());
+       addressRepository.save(address);
+       return modelMapper.map(address, AddressDTO.class);
+    }
+
+    ///////Delete Address///////
+    public String deleteAddress(Long addressId){
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new ApiException(""));
     }
 }

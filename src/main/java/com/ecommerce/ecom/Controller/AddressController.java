@@ -3,6 +3,7 @@ package com.ecommerce.ecom.Controller;
 import com.ecommerce.ecom.Model.Address;
 import com.ecommerce.ecom.Model.User;
 import com.ecommerce.ecom.Payload.AddressDTO;
+import com.ecommerce.ecom.Repository.AddressRepository;
 import com.ecommerce.ecom.Service.AddressService;
 import com.ecommerce.ecom.Util.AuthUtil;
 import com.sun.net.httpserver.HttpsConfigurator;
@@ -21,6 +22,8 @@ public class AddressController {
     AddressService addressService;
     @Autowired
     private AuthUtil authUtil;
+    @Autowired
+    private AddressRepository addressRepository;
 
     //CREATE ADDRESS////////////////////////////////
     @PostMapping("/public/create/address")
@@ -42,5 +45,20 @@ public class AddressController {
     public ResponseEntity<List<AddressDTO>> getAllAddresses(){
         List<AddressDTO> addressDTOList = addressService.getAllAddresses();
         return new ResponseEntity<>(addressDTOList, HttpStatus.OK);
+    }
+
+    //Update address///////
+    @PutMapping("/public/update/{addressId}")
+    public ResponseEntity<AddressDTO> updateAddress(@PathVariable Long addressId,
+                                                    @RequestBody AddressDTO addressDTO){
+        AddressDTO updatedAddressDTO = addressService.updateAddress(addressId, addressDTO);
+        return new ResponseEntity<>(updatedAddressDTO, HttpStatus.OK);
+    }
+
+    //Delete address///////
+    @DeleteMapping("/public/delete/{addressId}")
+    public ResponseEntity<AddressDTO> deleteAddress(@PathVariable Long addressId){
+        AddressDTO updatedAddressDTO = addressService.deleteAddress(addressId);
+        return new ResponseEntity<>(updatedAddressDTO, HttpStatus.OK);
     }
 }
