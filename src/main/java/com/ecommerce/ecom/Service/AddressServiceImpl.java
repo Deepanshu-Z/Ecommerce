@@ -1,6 +1,7 @@
 package com.ecommerce.ecom.Service;
 
 import com.ecommerce.ecom.ExceptionHandler.ApiException;
+import com.ecommerce.ecom.ExceptionHandler.ResourceNotFoundException;
 import com.ecommerce.ecom.Model.Address;
 import com.ecommerce.ecom.Model.User;
 import com.ecommerce.ecom.Payload.AddressDTO;
@@ -29,7 +30,7 @@ public class AddressServiceImpl implements AddressService{
         Address address = modelMapper.map(addressDTO, Address.class);
 
         User user = authUtil.loggedInUser();
-        if (user == null) throw new ApiException("Please log in first");
+        if (user == null) throw new ResourceNotFoundException("Please log in first");
 
         address.setUser(user);
         user.getAddresses().add(address);
@@ -43,7 +44,7 @@ public class AddressServiceImpl implements AddressService{
     ///GET getUserSpecificAddress///////////
     public List<AddressDTO> getUserSpecificAddress(User user){
         List<Address> addressList = user.getAddresses();
-        if(addressList.isEmpty()) throw new ApiException("Please add some address");
+        if(addressList.isEmpty()) throw new ResourceNotFoundException("Please add some address");
 
         List<AddressDTO> addressDTOS = addressList.stream()
                 .map(item -> modelMapper.map(item, AddressDTO.class))
@@ -55,7 +56,7 @@ public class AddressServiceImpl implements AddressService{
     //////GET ALL ADDRESSES////////////
     public List<AddressDTO> getAllAddresses(){
         List<Address> addressList = addressRepository.findAll();
-        if(addressList.isEmpty()) throw new ApiException("No addresses found");
+        if(addressList.isEmpty()) throw new ResourceNotFoundException("No addresses found");
 
         List<AddressDTO> addressDTOS = addressList.stream()
                 .map(item -> modelMapper.map(item, AddressDTO.class))
@@ -66,7 +67,7 @@ public class AddressServiceImpl implements AddressService{
     ///////Update Address///////
     public AddressDTO updateAddress(Long addressId, AddressDTO addressDTO){
        Address address = addressRepository.findById(addressId)
-               .orElseThrow(() -> new ApiException("Address not found, please tell a valid address."));
+               .orElseThrow(() -> new ResourceNotFoundException("Address not found, please tell a valid address."));
 
        address.setBuildingName(addressDTO.getBuildingName());
        address.setCity(addressDTO.getCity());
@@ -81,6 +82,10 @@ public class AddressServiceImpl implements AddressService{
     ///////Delete Address///////
     public String deleteAddress(Long addressId){
         Address address = addressRepository.findById(addressId)
-                .orElseThrow(() -> new ApiException(""));
+                .orElseThrow(() -> new ResourceNotFoundException("No address found with such Id"));
+
+        addressRepository.delete(address);
+
+        return "Address with ID: " + addressId + " deleted successfully";
     }
 }
