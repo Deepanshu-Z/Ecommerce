@@ -39,9 +39,9 @@ public class Address {
     @Size(min = 6, message = "Pincode must be atleast 6 characters")
     private String pincode;
 
-    @ManyToMany()
+    @ManyToOne()
     @JsonIgnore
-    private List<User> users = new ArrayList<>();
+    private User user;
 
     public String getStreet() {
         return street;
@@ -91,12 +91,20 @@ public class Address {
         this.pincode = pincode;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public Long getAddressId() {
+        return addressId;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setAddressId(Long addressId) {
+        this.addressId = addressId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Address() {
