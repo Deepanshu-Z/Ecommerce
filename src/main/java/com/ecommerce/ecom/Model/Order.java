@@ -22,9 +22,9 @@ public class Order {
 
     private LocalDate orderDate;
 
-//    @OneToOne
-//    @JoinColumn(name = "payment_id")
-//    private Payment payment;
+    @OneToOne
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
 
     private Double totalAmount;
     private String orderStatus;
@@ -32,6 +32,14 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "address_id")
     private Address address;
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
 
     public Long getOrderId() {
         return orderId;
