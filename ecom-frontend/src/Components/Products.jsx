@@ -28,7 +28,7 @@ export default function Products() {
   ];
   const errorMessage = "";
   const isLoading = false;
-  const productArray = products.map((items, i) => <ProductCard key={i} />);
+  const productArray = products.map((item, i) => <ProductCard key={i} value = {item}/>);
 
   return (
     <div className="lg:px-14 sm:px-8 px-4 py-14 2xl:w-[90%] 2xl:mx-auto">
