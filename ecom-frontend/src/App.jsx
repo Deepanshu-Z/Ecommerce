@@ -1,13 +1,13 @@
 import { FaBeer } from "react-icons/fa";
+import Products from "./Components/Products";
 
 function App() {
 
   return (
-    <>
-      <div className="App">
-        <h1>Welcome Brother this is our ECOM APP <FaBeer /></h1>
-      </div>
-    </>
+    <div className="flex items-center justify-center h-screen bg-gray-800
+    text-2xl font-bold">
+        <Products/>
+    </div>
   )
 }
 
