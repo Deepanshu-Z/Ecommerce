@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
+import ProductViewModal from "./ProductViewModal";
 
 export default function ProductCard(props) {
   const [openProductViewModal, setOpenProductViewModal] = useState(false);
@@ -12,7 +13,7 @@ export default function ProductCard(props) {
   }
   return (
     <div className="border rounded-lg shadow-xl overflow-hidden transition-shadow duration-300">
-      <div onClick={handleProductView(props)} className="w-full overflow-hidden aspect-[3/2]">
+      <div onClick={() => handleProductView(props.value)} className="w-full overflow-hidden aspect-[3/2]">
         <img
           className="w-full h-full cursor-pointer transition-transform duration-300 transform hover:scale-105"
           src={props.value.image}
@@ -21,9 +22,8 @@ export default function ProductCard(props) {
       </div>
       <div className="p-4">
         <h2
-          onClick={handleProductView(props)}
-          className="text-lg font-semibold mb-2 cursor-pointer"
-        >
+          onClick={() => handleProductView(props.value)}
+          className="text-lg font-semibold mb-2 cursor-pointer">
           {props.value.productName}
         </h2>
 
@@ -58,6 +58,14 @@ export default function ProductCard(props) {
 
         </div>
       </div>
+      
+      <ProductViewModal
+        open = {openProductViewModal}
+        setOpen = {setOpenProductViewModal}
+        product= {selectedViewProduct}
+        isAvailable = {isAvailable}
+      />
+
     </div>
   );
 }
