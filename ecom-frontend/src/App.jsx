@@ -1,4 +1,3 @@
-// App.js
 import Products from "./Components/Products";
 
 function App() {
