@@ -8,6 +8,8 @@ export default function Products() {
   const {products} = useSelector(
       (state) => state.products
   )
+  const entireState = useSelector((state) => state);
+  console.log("Redux state:", entireState);
   const dispatch = useDispatch(); 
 
   useEffect(() => {
@@ -16,7 +18,10 @@ export default function Products() {
 
   const errorMessage = "";
   const isLoading = false;
-  //const productArray = products.map((item, i) => <ProductCard key={i} value = {item}/>);
+  const productArray = products?.map((item, i) => (
+    <ProductCard key={i} value={item} />
+  ));
+
 
   return (
     <div className="lg:px-14 sm:px-8 px-4 py-14 2xl:w-[90%] 2xl:mx-auto">
@@ -32,7 +37,7 @@ export default function Products() {
       ) : (
         <div className="min-h-[700px]">
           <div className="pb-6 pt-14 grid 2xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-y-6 gap-x-6">
-            {/* {productArray} */}
+            { productArray }
           </div>
         </div>
       )}

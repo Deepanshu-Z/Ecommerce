@@ -1,5 +1,5 @@
     const initialState = {
-    products:null,
+    products: [],
     categories:null,
     pagination: {}
 }
