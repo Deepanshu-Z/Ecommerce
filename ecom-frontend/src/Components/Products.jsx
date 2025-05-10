@@ -5,18 +5,20 @@ import { useEffect } from "react";
 import { fetchProducts } from "../Store/Action/action";
 
 export default function Products() {
+  
   const {products} = useSelector(
       (state) => state.products
   )
+  const { errorMessage, isLoading } = useSelector(
+      (state) => state.errors
+  )
   
   const dispatch = useDispatch(); 
-
   useEffect(() => {
     dispatch(fetchProducts())
   }, [dispatch]);
 
-  const errorMessage = "";
-  const isLoading = false;
+  
   const productArray = products?.map((item, i) => (
     <ProductCard key={i} value={item} />
   ));
