@@ -1,14 +1,12 @@
-import { FaBeer } from "react-icons/fa";
+// App.js
 import Products from "./Components/Products";
 
 function App() {
-
   return (
-    <div className="flex items-center justify-center h-screen bg-white-800
-    text-2xl font-bold">
-        <Products/>
+    <div className="min-h-screen bg-white text-2xl font-bold">
+      <Products />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

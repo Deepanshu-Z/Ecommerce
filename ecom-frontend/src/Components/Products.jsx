@@ -3,7 +3,7 @@ import ProductCard from "./ProductCard";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchProducts } from "../Store/Action/action";
-
+import { Filter } from "./Filter";
 export default function Products() {
   
   const {products} = useSelector(
@@ -26,6 +26,7 @@ export default function Products() {
 
   return (
     <div className="lg:px-14 sm:px-8 px-4 py-14 2xl:w-[90%] 2xl:mx-auto">
+      <Filter />
       {isLoading ? (
         <div>Loading...</div>
       ) : errorMessage ? (
