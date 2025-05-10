@@ -8,8 +8,7 @@ export default function Products() {
   const {products} = useSelector(
       (state) => state.products
   )
-  const entireState = useSelector((state) => state);
-  console.log("Redux state:", entireState);
+  
   const dispatch = useDispatch(); 
 
   useEffect(() => {
