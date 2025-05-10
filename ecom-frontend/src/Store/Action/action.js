@@ -3,7 +3,8 @@ import api from "../../Api/api";
 
 export const fetchProducts = () => async(dispatch) => {    
     try {
-        const data = api.get("/public/products");
+        const res = await api.get("/public/products");
+         const data = res.data;
         dispatch({
             type: "FETCH_PRODUCTS",
             payload: data.content,

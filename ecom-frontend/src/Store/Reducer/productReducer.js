@@ -1,4 +1,4 @@
-    const initialState = {
+const initialState = {
     products: [],
     categories:null,
     pagination: {}
