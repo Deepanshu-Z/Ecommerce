@@ -1,20 +1,21 @@
 import { FaExclamation, FaExclamationTriangle } from "react-icons/fa";
 import ProductCard from "./ProductCard";
-import { useDispatch, useSelector } from "react-redux";
+import {  useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { fetchProducts } from "../Store/Action/action";
+import { fetchCategories, fetchProducts } from "../Store/Action/action";
 import { Filter } from "./Filter";
 import useProductFilter from "./useProductFilter";
 export default function Products() {
   
-  const {products} = useSelector(
+  const {products, categories} = useSelector(
       (state) => state.products
   )
   const { errorMessage, isLoading } = useSelector(
       (state) => state.errors
   )
-   
-  useProductFilter()
+  
+  useProductFilter();
+
   const productArray = products?.map((item, i) => (
     <ProductCard key={i} value={item} />
   ));
@@ -22,7 +23,7 @@ export default function Products() {
 
   return (
     <div className="lg:px-14 sm:px-8 px-4 py-14 2xl:w-[90%] 2xl:mx-auto">
-      <Filter />
+      <Filter categories = {categories ? categories : []} />
       {isLoading ? (
         <div>Loading...</div>
       ) : errorMessage ? (
