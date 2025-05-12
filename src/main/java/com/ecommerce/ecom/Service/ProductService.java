@@ -1,5 +1,6 @@
 package com.ecommerce.ecom.Service;
 
+import com.ecommerce.ecom.Model.Category;
 import com.ecommerce.ecom.Model.Product;
 import com.ecommerce.ecom.Payload.CategoryDTO;
 import com.ecommerce.ecom.Payload.ProductDTO;
@@ -13,7 +14,7 @@ import java.util.List;
 public interface ProductService {
     ProductDTO addProduct(Long categoryId, ProductDTO productDTO);
 
-    ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+    ProductResponse getAllProducts(String key, String category, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
     ProductResponse getCategoryProduct(Long categoryId, Integer pageNumber,  Integer pageSize, String sortBy, String sortOrder);
 

@@ -13,10 +13,12 @@ import com.ecommerce.ecom.Repository.ProductRepository;
 import jakarta.annotation.Resource;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,8 @@ public class ProductServiceImpl implements ProductService{
         this.modelMapper = modelMapper;
         this.categoryRepository = categoryRepository;
     }
+    @Value("${image.base.url}")
+    private String imageBase;
 
     //////////////////////////ADDING PRODUCT/////////////////////////////////////
     public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
@@ -50,7 +54,6 @@ public class ProductServiceImpl implements ProductService{
         Product product = modelMapper.map(productDTO, Product.class);
         Optional<Product> productExist = productRepository.findByProductName(product.getProductName());
         if(productExist.isPresent()) throw new ApiException(product.getProductName());
-
         product.setImage("default.png");
         product.setCategory(category);
         double specialPrice = product.getPrice() -
@@ -60,18 +63,55 @@ public class ProductServiceImpl implements ProductService{
         return modelMapper.map(savedProduct, ProductDTO.class);
     }
 
+    ///////////////UPLOAD IMAGE TO SERVER///////////////////////////////////
+    public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
+        //get the product from db
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product ID is not valid or product is not present"));
+
+        //upload it to server
+        //get the filename in which it is uploaded
+        String path = "images/";
+        String filename = uploadImage(path, image);
+
+        //save it
+        product.setImage(filename);
+        productRepository.save(product);
+
+        //and return dto
+        return modelMapper.map(product, ProductDTO.class);
+    }
+
 
     //////////////////////////GET ALL PRODUCTs/////////////////////////////////////
-    public ProductResponse getAllProducts( Integer pageNumber, Integer pageSize, String sortBy, String sortOrder ){
+    public ProductResponse getAllProducts( String key, String category, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder ){
         Sort sortOrderAndBy = sortOrder.equalsIgnoreCase("asc")?
                 Sort.by(sortBy).ascending():
                 Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sortOrderAndBy);
-        Page<Product> pageDetails = productRepository.findAll(pageable);
+
+        Specification<Product> specs = Specification.where(null);
+        if (key!=null && !key.isEmpty()){
+            specs = specs.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(criteriaBuilder.lower(criteriaBuilder.lower(root.get("productName"))), "%" + key.toLowerCase() + "%"));
+        }
+
+        if (category != null && !category.isEmpty()) {
+            specs = specs.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like((root.get("category").get("categoryName")), category));
+        }
+
+
+        Page<Product> pageDetails = productRepository.findAll(specs, pageable);
         List<Product> products = pageDetails.getContent();
         if (products.isEmpty()) throw new ResourceNotFoundException("No products present in the Database!");
         List<ProductDTO> productDTO = products.stream()
-                .map(product -> modelMapper.map(product, ProductDTO.class))
+                .map(product ->
+                {
+                        ProductDTO responeProductDTO = modelMapper.map(product, ProductDTO.class);
+                        responeProductDTO.setImage(constructImageUrl(product.getImage()));
+                        return responeProductDTO;
+                })
                 .toList();
         ProductResponse response = new ProductResponse();
         response.setContent(productDTO);
@@ -82,6 +122,10 @@ public class ProductServiceImpl implements ProductService{
         response.setTotalPages(pageDetails.getTotalPages());
 
         return response;
+    }
+
+    public String constructImageUrl(String imageName){
+        return imageBase.endsWith("/")?imageBase+imageName:imageBase+"/"+imageName ;
     }
 
     //////////////////////////GET PRODUCTs by CATEGORY/////////////////////////////////////
@@ -171,24 +215,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
 
-    ///////////////UPLOAD IMAGE TO SERVER///////////////////////////////////
-    public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
-        //get the product from db
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product ID is not valid or product is not present"));
 
-        //upload it to server
-        //get the filename in which it is uploaded
-        String path = "images/";
-        String filename = uploadImage(path, image);
-
-        //save it
-        product.setImage(filename);
-        productRepository.save(product);
-
-        //and return dto
-        return modelMapper.map(product, ProductDTO.class);
-    }
 
     private String uploadImage(String path, MultipartFile image) throws IOException {
         //fetch the image file name
