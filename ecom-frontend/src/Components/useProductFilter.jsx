@@ -9,7 +9,6 @@ const useProductFilter = () => {
 
   useEffect(() => {
     const params = new URLSearchParams();
-
     const currentPage = Number(searchParams.get("page") || 1);
     const sortOrder = searchParams.get("sortby") || "asc";
     const categoryParams = searchParams.get("category") || null;

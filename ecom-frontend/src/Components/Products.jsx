@@ -5,9 +5,11 @@ import { useEffect } from "react";
 import { fetchCategories, fetchProducts } from "../Store/Action/action";
 import { Filter } from "./Filter";
 import useProductFilter from "./useProductFilter";
+import Paginations from "./Paginations";
+
 export default function Products() {
   
-  const {products, categories} = useSelector(
+  const {products, categories, pagination} = useSelector(
       (state) => state.products
   )
   const { errorMessage, isLoading } = useSelector(
@@ -38,8 +40,12 @@ export default function Products() {
           <div className="pb-6 pt-14 grid 2xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-y-6 gap-x-6">
             { productArray }
           </div>
+          <Paginations 
+          numberOfPage = {pagination?.totalPages}
+          totalProducts = {pagination?.totalElements} />
         </div>
       )}
+
     </div>
   );
 }
