@@ -1,12 +1,12 @@
 import axios from "axios";
 import api from "../../Api/api";
 
-export const fetchProducts = () => async(dispatch) => {    
+export const fetchProducts = (queryString) => async(dispatch) => {    
     try {
         dispatch({
             type: "IS_FETCHING"
         });
-        const res = await api.get("/public/products");
+        const res = await api.get(`/public/products?${queryString}`);
         const data = res.data;
         dispatch({
             type: "FETCH_PRODUCTS",

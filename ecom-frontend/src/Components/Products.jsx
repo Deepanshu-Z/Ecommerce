@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchProducts } from "../Store/Action/action";
 import { Filter } from "./Filter";
+import useProductFilter from "./useProductFilter";
 export default function Products() {
   
   const {products} = useSelector(
@@ -12,13 +13,8 @@ export default function Products() {
   const { errorMessage, isLoading } = useSelector(
       (state) => state.errors
   )
-  
-  const dispatch = useDispatch(); 
-  useEffect(() => {
-    dispatch(fetchProducts())
-  }, [dispatch]);
-
-  
+   
+  useProductFilter()
   const productArray = products?.map((item, i) => (
     <ProductCard key={i} value={item} />
   ));
