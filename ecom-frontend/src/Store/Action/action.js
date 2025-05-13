@@ -1,4 +1,3 @@
-
 import api from "../../Api/api";
 
 export const fetchProducts = (queryString) => async(dispatch) => {    
@@ -56,4 +55,29 @@ export const fetchCategories = () => async(dispatch) => {
         });
         console.log(error);
     }
+}
+
+
+export const addToCart = (data, qty = 1, toast) => 
+    (dispatch, getState) => {
+        //Find the Product
+        const {products} = getState().products;
+        const getProduct = products.find(
+            (item) => item.productId === data.productId ); 
+        
+        //Check if quantity exist
+        const isQuantityExist = getProduct.quantity >= qty;
+
+        //If yes, then add to cart
+        if(isQuantityExist){
+            dispatch({
+                type : "ADD_CART",
+                payload : {...data, quantity : qty}
+            })
+            localStorage.setItem("cartItems", JSON.stringify(getState().cart.cart))
+            toast.success(`${data.productName} added to cart`)
+        }else{
+            toast.error(`${data.productName} out of stock!`)
+        }
+
 }

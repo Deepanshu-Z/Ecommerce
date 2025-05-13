@@ -4,10 +4,12 @@ import Products from "./Components/Products";
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import About from './Components/About'
 import Contact from './Components/Contact'
-
+import React from "react";
+import { Toaster } from "react-hot-toast";
 function App() {
   return (
     <div className="min-h-screen bg-white text-2xl font-bold">
+      <React.Fragment>
       <Router>
         <Navbar />
         <Routes>
@@ -17,6 +19,8 @@ function App() {
           <Route path='/contact' element={ <Contact />}/>
         </Routes>
       </Router>
+      <Toaster position= 'bottom-center'/>
+      </React.Fragment>
       
       
     </div>
