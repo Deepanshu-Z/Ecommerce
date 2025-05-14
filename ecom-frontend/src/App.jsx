@@ -7,7 +7,7 @@ import Contact from './Components/Contact'
 import React from "react";
 import { Toaster } from "react-hot-toast";
 import Cart from "./Components/cart/Cart";
-import LogIn from "./Components/auth/Auth";
+import LogIn from "./Components/auth/Login";
 function App() {
   return (
     <div className="min-h-screen bg-white text-2xl font-bold">

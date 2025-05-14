@@ -3,21 +3,26 @@ import { useForm } from "react-hook-form";
 import { AiOutlineLogin } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import InputField from "../InputField";
+import { useDispatch } from "react-redux";
+import { authenticateSignInUser } from "../../Store/Action/action";
+import toast from "react-hot-toast";
 
 const LogIn = () => {
     const navigate = useNavigate();
     const [loader, setLoader] = useState(false);
+    const dispatch = useDispatch();
 
     const {
         register,
         handleSubmit,
+        reset,
         formState: {errors},
     } = useForm({
         mode: "onTouched",
     });
 
     const loginHandler = async (data) => {
-        console.log("Login Click");
+        dispatch(authenticateSignInUser(data, toast, reset, navigate, setLoader));  
     };
 
     return (
@@ -58,7 +63,7 @@ const LogIn = () => {
 
             <button
                 disabled={loader}
-                className="bg-button-gradient flex gap-2 items-center justify-center font-semibold text-white w-full py-2 hover:text-slate-400 transition-colors duration-100 rounded-sm my-3"
+                className="bg-button-gradient flex gap-2 items-center justify-center font-semibold text-black w-full py-2 hover:text-slate-400 transition-colors duration-100 rounded-sm my-3"
                 type="submit">
                 {loader ? (
                     <>Loading...</>
