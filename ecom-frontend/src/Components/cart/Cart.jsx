@@ -1,7 +1,17 @@
 import { MdArrowBack, MdShoppingCart } from "react-icons/md";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import ItemContent from "./ItemContent";
 
 const Cart = () => {
+    const {cart} = useSelector((state) => state.cart)
+    const newCart = {...cart}
+
+    newCart.totalPrice = cart?.reduce(
+        (acc, cur) => acc + Number(cur.specialPrice)*Number(cur.quantity), 0
+    )
+    if (!cart || cart.length === 0) return <h1>Cart is Empty</h1>;
+    
     return (
         <div className="lg:px-14 sm:px-8 px-4 py-10">
             <div className="flex flex-col items-center mb-12">
@@ -30,6 +40,15 @@ const Cart = () => {
                 </div>
             </div>
 
+
+            <div>
+                {cart && cart.map((item, i) => 
+                <ItemContent key = {i} {...item} />
+                )}
+
+            </div>
+
+
             <div className="border-t-[1.5px] border-slate-200 py-4 flex sm:flex-row sm:px-0 px-2 flex-col sm:justify-between gap-4">
                 <div></div>
                 <div className="flex text-sm gap-1 flex-col">
@@ -45,7 +64,7 @@ const Cart = () => {
                     <Link className="w-full flex justify-end" to="/checkout">
                     <button
                         onClick={() => {}}
-                        className="font-semibold w-[300px] py-2 px-4 rounded-sm bg-customBlue text-white flex items-center justify-center gap-2 hover:text-gray-300 transition duration-500">
+                        className="font-semibold w-[300px] py-2 px-4 cursor-pointer rounded-sm bg-blue-500 text-white flex items-center justify-center gap-2 ">
                         <MdShoppingCart size={20} />
                         Checkout
                     </button>
