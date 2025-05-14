@@ -7,8 +7,13 @@ const cartItems = localStorage.getItem("cartItems")
                 :[];
 
 const initialState = {
-  cart: { cart: cartItems } 
+  cart: {
+    cart: cartItems,
+    totalPrice: 0,
+    cartId: null
+  }
 };
+
 
 export const store = configureStore({
     reducer: {
