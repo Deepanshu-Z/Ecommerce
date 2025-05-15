@@ -5,11 +5,16 @@ import { FaShoppingCart } from 'react-icons/fa';
 import { IoExitOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { logOutUser } from '../Store/Action/action';
 const UserMenu = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const { user } = useSelector((state) => state.auth);
+      const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
@@ -18,7 +23,7 @@ const UserMenu = () => {
     };
 
     const logOutHandler = () => {
-        
+         dispatch(logOutUser(navigate));
       };
   
     return (
