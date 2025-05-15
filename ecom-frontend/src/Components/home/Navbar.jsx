@@ -9,7 +9,8 @@ import { Link, useLocation } from "react-router-dom";
 const Navbar = () => {
   const path = useLocation().pathname;
   const [navbarOpen, setNavbarOpen] = useState(false);
-  const {cart} = useSelector((state) => state.cart)
+  const {cart} = useSelector((state) => state.cart);  
+   const { user } = useSelector((state) => state.auth);
   return (
     <div className="h-[70px] bg-black text-white z-50 flex items-center sticky top-0">
       <div className="lg:px-14 sm:px-8 px-4 w-full flex justify-between items-center">
@@ -56,6 +57,11 @@ const Navbar = () => {
             </Link>
           </li>
 
+          {(user && user.id) ? (
+                    <li className="font-[500] transition-all duration-150">
+                        <p>Welcome</p>
+                    </li>
+                ) : (
           <li className="font-[500] transition-all duration-150">
             <Link
               to="/login"
@@ -64,7 +70,7 @@ const Navbar = () => {
               <FaSignInAlt />
               <span>Login</span>
             </Link>
-          </li>
+          </li>)}
         </ul>
 
         <button
