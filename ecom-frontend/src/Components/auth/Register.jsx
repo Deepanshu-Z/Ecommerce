@@ -3,10 +3,14 @@ import { useForm } from 'react-hook-form';
 import { FaUserPlus } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import InputField from '../shared/InputField';
+import { useDispatch } from 'react-redux';
+import { registerNewUser } from '../../store/actions';
+import toast from 'react-hot-toast';
 
 const Register = () => {
     const navigate = useNavigate();
     const [loader, setLoader] = useState(false);
+    const dispatch = useDispatch();
 
     const {
         register,
@@ -18,7 +22,7 @@ const Register = () => {
     });
 
     const registerHandler = async (data) => {
-        console.log("Register Click");
+        dispatch(registerNewUser(data, toast, reset, navigate, setLoader));
      };
 
     return (

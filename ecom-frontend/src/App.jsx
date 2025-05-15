@@ -9,7 +9,7 @@ import { Toaster } from "react-hot-toast";
 import Cart from "./Components/cart/Cart";
 import LogIn from "./Components/auth/Login";
 import PrivateRoute from "./Components/PrivateRoute";
-import Register from "./Components/Register";
+import Register from "./Components/auth/Register";
 function App() {
   return (
     <div className="min-h-screen bg-white text-2xl font-bold">
