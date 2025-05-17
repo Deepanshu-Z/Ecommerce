@@ -46,17 +46,17 @@ Make sure the following are installed:
 ## 🔐 Environment Variables
 
 In `backend/src/main/resources/application.properties`:
-
+```
 spring.datasource.url=jdbc:mysql://localhost:3306/Ecomdb  
 spring.datasource.username=YOUR_DB_USERNAME  
 spring.datasource.password=YOUR_DB_PASSWORD  
 jwt.secret=YOUR_SECRET_KEY  
 server.port=8080  
-
+```
 In `frontend/.env` (if needed):
-
+```
 REACT_APP_API_URL=http://localhost:8080
-
+```
 ------------------------------------------------------------
 
 ## 🚀 How to Run the Project Locally
